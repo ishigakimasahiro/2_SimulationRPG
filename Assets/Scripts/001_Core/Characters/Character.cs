@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using DG.Tweening;
 using System.Linq;
 
@@ -36,16 +37,14 @@ public class Character : MonoBehaviour
     }
 
     // キャラを移動
-    public void Move(Vector2Int pos,List<TileObj> root)
+    public void Move(Vector2Int pos,List<TileObj> root,UnityAction movedAction)
     {
         // Selectを使って、リストの中の特定の要素だけを取得したリストを作る
         Vector3[] path = root.Select(tile => tile.transform.position).ToArray();
         // 経路に沿って移動する(経路,移動時間)
-        transform.DOPath(path, 0.7f).SetEase(Ease.Linear);
+        transform.DOPath(path, 0.7f).SetEase(Ease.Linear).OnComplete(() =>movedAction.Invoke());
         positionInt = pos;
         isMoved = true;
-        //ansform.position = (Vector2)positionInt;
-        //transform.DOMove((Vector2)positionInt, 0.4f).SetEase(Ease.Linear);
     }
 
     public int Damage(int value)

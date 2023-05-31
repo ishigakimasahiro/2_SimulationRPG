@@ -10,7 +10,7 @@ public class MapManager : MonoBehaviour
     // マップ生成関数を呼ぶ
     [SerializeField] MapGenerator mapGenerator;
 
-    // 
+    // 経路探索用コスト
     [SerializeField] CalcMoveRange calcMoveRange;
 
     // 生成したマップを管理
@@ -66,12 +66,18 @@ public class MapManager : MonoBehaviour
         calcMoveRange.SetMoveCost(tileObjs,true);
         int[,] result = calcMoveRange.StartSearch(index.x, index.y, character.MoveRange);
 
+        /* マップの端に行くと行動できなくなるエラー解消 */
+        /*nullチェック*/
+
+
+        /**/
+
         for (int i = 0; i < result.GetLength(0); i++)
         {
             for (int j = 0; j < result.GetLength(1); j++)
             {
                 // 0以上なら移動範囲として追加する
-                if(result[i,j] >= 0)
+                if (result[i,j] >= 0)
                 {
                     movableTiles.Add(tileObjs[i, j]);
                 }
@@ -109,6 +115,12 @@ public class MapManager : MonoBehaviour
         Vector2Int index = GetTileOn(character).Index;
         calcMoveRange.SetMoveCost(tileObjs, false);
         int[,] result = calcMoveRange.StartSearch(index.x, index.y, character.AttackRange);
+
+        /* マップの端に行くと行動できなくなるエラー解消 */
+        /*nullチェック*/
+
+
+        /**/
 
         for (int i = 0; i < result.GetLength(0); i++)
         {

@@ -1274,6 +1274,7 @@ MonoBehaviour:
   statusUI: {fileID: 557127095}
   damageUI: {fileID: 324412052}
   turnEndButton: {fileID: 112487461}
+  map: {fileID: 1889575306}
 --- !u!4 &600982911
 Transform:
   m_ObjectHideFlags: 0
@@ -2759,6 +2760,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1889575305}
+  - component: {fileID: 1889575306}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -2781,6 +2783,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1889575306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889575304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c970b95721ad1464db309b9b6b93c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rectTransform: {fileID: 1889575305}
 --- !u!1 &1890138558
 GameObject:
   m_ObjectHideFlags: 0
@@ -2991,6 +3006,7 @@ MonoBehaviour:
   cursor: {fileID: 1890138559}
   mapGenerator: {fileID: 5227722}
   calcMoveRange: {fileID: 1933422420}
+  map: {fileID: 0}
 --- !u!4 &1933422419
 Transform:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using System.Linq;
 
 public class GameManager : MonoBehaviour
@@ -45,7 +46,7 @@ public class GameManager : MonoBehaviour
     // ダメージUI表示
     [SerializeField] DamageUI damageUI;
 
-    // 
+    // ターン終了ボタンの表示/非表示
     [SerializeField] GameObject turnEndButton;
 
     private void Start()
@@ -63,6 +64,20 @@ public class GameManager : MonoBehaviour
         {
             PlayerClickAction();
         }
+    }
+
+    void SetMoveInfomation()
+    {
+        // 取得した子オブジェクトを処理する
+        // 移動範囲の表示
+        mapManager.ShowMovablePanels(selectedCharacter, movableTiles);  /*2023//5/31 nullチェックの変更*/
+    }
+
+    void SetAttackInfomation()
+    {
+        // 取得した子オブジェクトを処理する
+        // 攻撃範囲の表示
+        mapManager.ShowAttackablePanels(selectedCharacter, attackableTiles);  /*2023//5/31 nullチェックの変更*/
     }
 
     void PlayerClickAction()
@@ -112,9 +127,11 @@ public class GameManager : MonoBehaviour
             // もし自分のキャラが動いていないなら、移動範囲表示
             if (character.IsMoved == false && character.IsEnemy == false)
             {
+                // 移動範囲をリセット
                 mapManager.ResetMovablePanels(movableTiles);
-                // 移動範囲を表示
-                mapManager.ShowMovablePanels(selectedCharacter, movableTiles);
+
+                SetMoveInfomation();
+
                 return true;
             }
         }
@@ -150,7 +167,7 @@ public class GameManager : MonoBehaviour
             {
                 // selectedCharacterをtileObjまで移動させる
                 // 経路を取得して移動する
-                selectedCharacter.Move(clickTileObj.positionInt,mapManager.GetRoot(selectedCharacter,clickTileObj));
+                selectedCharacter.Move(clickTileObj.positionInt,mapManager.GetRoot(selectedCharacter,clickTileObj),null);  /*2023//5/31 関数未登録*/
 
                 phase = Phase.PlayerCharacterCommandSelection;
 
@@ -208,10 +225,10 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("攻撃選択");
         phase = Phase.PlayerCharacterTargetSelection;
-        // 攻撃範囲を表示
+        // 攻撃範囲をリセット
         mapManager.ResetAttackablePanels(attackableTiles);
-        // 移動範囲を表示
-        mapManager.ShowAttackablePanels(selectedCharacter, attackableTiles);
+
+        SetAttackInfomation();
 
         actionCommandUI.ShowAttackButton(false);
     }
@@ -235,7 +252,14 @@ public class GameManager : MonoBehaviour
             selectedCharacter = null;
             mapManager.ResetAttackablePanels(attackableTiles);
             phase = Phase.PlayerCharacterSelection;
-            StartCoroutine(phasePanelUI.PhasePanelAnim("PLAYER TURN"));// フェーズアニメ
+        }
+
+        if (phase == Phase.EnemyCharacterTargetSelection)  /*2023//5/31 追加*/
+        {
+            actionCommandUI.Show(false);
+            selectedCharacter = null;
+            mapManager.ResetAttackablePanels(attackableTiles);
+            OnEnemyTurnEnd();
         }
     }
 
@@ -271,6 +295,8 @@ public class GameManager : MonoBehaviour
 
     bool IsEnemyCharacter()
     {
+        TileObj tileObj = mapManager.GetClickTileObj();  /*2023//5/31 追加*/
+
         Character randomEnemy = charactersManager.GetRandomEnemy();
         if (randomEnemy)
         {
@@ -283,9 +309,11 @@ public class GameManager : MonoBehaviour
             // もし自分のキャラが動いていないなら、移動範囲表示
             if (randomEnemy.IsMoved == false && randomEnemy.IsEnemy)
             {
+                // 移動範囲をリセット
                 mapManager.ResetMovablePanels(movableTiles);
                 // 移動範囲を表示
-                mapManager.ShowMovablePanels(selectedCharacter, movableTiles);
+                SetMoveInfomation();
+
                 Invoke("EnemyCharacterMoveSelection", 2f);
                 return true;
             }
@@ -301,24 +329,30 @@ public class GameManager : MonoBehaviour
 
         // ・移動範囲の中で、Playerに近い場所を探す
         TileObj targetTile = movableTiles
-            .OrderBy(tile => Vector2.Distance(target.Position, tile.positionInt))// 小さい順に並べる
+            .OrderBy(tile => Vector2.Distance(target.Position, tile.positionInt))  // 小さい順に並べる
             .FirstOrDefault();// 最初のタイルを渡す
 
+        if (target == null) return;
+        if (targetTile == null) return;
+
         // 敵キャラ以外のタイルをクリックするとエラー、2体目の敵キャラの移動時にエラー
-        selectedCharacter.Move(targetTile.positionInt, mapManager.GetRoot(selectedCharacter, targetTile));
+        selectedCharacter.Move(targetTile.positionInt, mapManager.GetRoot(selectedCharacter, targetTile),EnemyCharacterTargetSelection);/*2023//5/31 関数登録*/
         mapManager.ResetMovablePanels(movableTiles);
-        StartCoroutine(EnemyCharacterTargetSelection());
     }
 
     // 敵の攻撃
-    IEnumerator EnemyCharacterTargetSelection()
+    void EnemyCharacterTargetSelection()
     {
-        // 攻撃範囲の取得
+        phase = Phase.EnemyCharacterTargetSelection;/*2023//5/31 追加*/
+
+        TileObj tileObj = mapManager.GetClickTileObj();/*2023//5/31 追加*/
+
+        // 攻撃範囲をリセット
         mapManager.ResetAttackablePanels(attackableTiles);
 
-        yield return new WaitForSeconds(2f);
+        // 攻撃範囲の表示
+        SetAttackInfomation();
 
-        mapManager.ShowAttackablePanels(selectedCharacter, attackableTiles);
         // 範囲内にPlayerキャラがいるなら取得
         Character targetChara = null;
 
@@ -339,34 +373,7 @@ public class GameManager : MonoBehaviour
             actionCommandUI.Show(false);
             selectedCharacter = null;
             damageUI.Show(targetChara, damage);
-            StartCoroutine(OnEnemyAttacked());
-        }
-        else
-        {
-            Invoke("OnEnemyTurnEnd", 2f);
-        }
-    }
-
-    // 攻撃が終わったよ
-    IEnumerator OnEnemyAttacked()
-    {
-        Character randomEnemy = charactersManager.GetRandomEnemy();
-
-        // 選択キャラの保持
-        selectedCharacter = randomEnemy;
-
-        // キャラのステータスを表示
-        statusUI.Show(selectedCharacter);
-
-        // 全ての敵キャラが移動、攻撃完了していなかったら
-        if (randomEnemy.IsMoved == false && randomEnemy.IsEnemy)
-        {
-            actionCommandUI.Show(false);
-            selectedCharacter = null;
-            mapManager.ResetAttackablePanels(attackableTiles);
-            /*TODO */
-            yield return new WaitForSeconds(2f);
-            phase = Phase.PlayerCharacterSelection;
+            /*2023//5/31 削除*/
         }
         else
         {
@@ -378,10 +385,9 @@ public class GameManager : MonoBehaviour
     {
         //Debug.Log("敵ターン終了");
         selectedCharacter = null;
-        // 攻撃範囲非表示
-        mapManager.ResetAttackablePanels(attackableTiles);
         phase = Phase.PlayerCharacterSelection;
-        StartCoroutine(phasePanelUI.PhasePanelAnim("PLAYER TURN"));// フェーズアニメ
+        mapManager.ResetAttackablePanels(attackableTiles);           // 攻撃範囲非表示  /*2023//5/31 追加*/
+        StartCoroutine(phasePanelUI.PhasePanelAnim("PLAYER TURN"));  // フェーズアニメ
         OnEnemyTurnEndButton();
         foreach (var chara in charactersManager.characters)
         {
@@ -411,9 +417,9 @@ public class GameManager : MonoBehaviour
 // 攻撃した場合勝手に相手ターンになってしまう
 // => 移動したかどうかのフラグ(bool)を作ってやればよい
 
-// ・攻撃した場合にターンの切り替えがされない=>もし全ての敵が行動終了していなかったらEnemyTurn
+// ・攻撃した場合にターンの切り替えがされない  =>  phase切り替え処理5/31追加
 // ・移動と同時に攻撃をしてしまう
 // ・エリアの端だとエラーが出る
 // ・Playerの方に近づかない
-// ・詰む
+// ・詰む  => もしMapがnullだったら行動しない
 // ・敵キャラが攻撃した後の敵のターンで止まる(EnemyCharacterSelection)
