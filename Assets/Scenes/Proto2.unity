@@ -272,6 +272,10 @@ PrefabInstance:
       value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
+      propertyPath: ease
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: name
       value: "\u4ED8\u304D\u4EBA"
       objectReference: {fileID: 0}
@@ -1274,7 +1278,6 @@ MonoBehaviour:
   statusUI: {fileID: 557127095}
   damageUI: {fileID: 324412052}
   turnEndButton: {fileID: 112487461}
-  map: {fileID: 1889575306}
 --- !u!4 &600982911
 Transform:
   m_ObjectHideFlags: 0
@@ -2181,6 +2184,10 @@ PrefabInstance:
       value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
+      propertyPath: ease
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: name
       value: "\u65752"
       objectReference: {fileID: 0}
@@ -2194,11 +2201,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: moveRange
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: attackRange
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: positionInt.x
@@ -2583,6 +2590,10 @@ PrefabInstance:
       value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
+      propertyPath: ease
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: name
       value: "\u65751"
       objectReference: {fileID: 0}
@@ -2596,11 +2607,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: moveRange
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: attackRange
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: positionInt.x
@@ -2795,7 +2806,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c970b95721ad1464db309b9b6b93c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rectTransform: {fileID: 1889575305}
+  maps: []
 --- !u!1 &1890138558
 GameObject:
   m_ObjectHideFlags: 0
@@ -3006,7 +3017,6 @@ MonoBehaviour:
   cursor: {fileID: 1890138559}
   mapGenerator: {fileID: 5227722}
   calcMoveRange: {fileID: 1933422420}
-  map: {fileID: 0}
 --- !u!4 &1933422419
 Transform:
   m_ObjectHideFlags: 0
@@ -3305,6 +3315,10 @@ PrefabInstance:
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: hp
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
+      propertyPath: ease
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 327835305333437569, guid: a102a7e74ccef754c90be89d7280a060, type: 3}
       propertyPath: name

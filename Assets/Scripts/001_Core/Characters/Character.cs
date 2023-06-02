@@ -19,7 +19,6 @@ public class Character : MonoBehaviour
     [SerializeField] int attackRange;
     [SerializeField] bool isMoved;
 
-
     public Vector2Int Position { get => positionInt; }
     public bool IsEnemy { get => isEnemy; }
     public string Name { get => name; }
@@ -41,8 +40,10 @@ public class Character : MonoBehaviour
     {
         // Selectを使って、リストの中の特定の要素だけを取得したリストを作る
         Vector3[] path = root.Select(tile => tile.transform.position).ToArray();
+          
         // 経路に沿って移動する(経路,移動時間)
-        transform.DOPath(path, 0.7f).SetEase(Ease.Linear).OnComplete(() =>movedAction.Invoke());
+        transform.DOPath(path, 0.3f).SetEase(Ease.Linear).OnComplete(() =>movedAction?.Invoke());
+        
         positionInt = pos;
         isMoved = true;
     }

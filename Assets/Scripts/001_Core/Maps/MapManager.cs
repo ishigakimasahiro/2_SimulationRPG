@@ -66,31 +66,22 @@ public class MapManager : MonoBehaviour
         calcMoveRange.SetMoveCost(tileObjs,true);
         int[,] result = calcMoveRange.StartSearch(index.x, index.y, character.MoveRange);
 
-        /* マップの端に行くと行動できなくなるエラー解消 */
-        /*nullチェック*/
-
-
-        /**/
+        // ***characterから上下左右のタイルを探す  // マップの外はバグあり***
 
         for (int i = 0; i < result.GetLength(0); i++)
         {
             for (int j = 0; j < result.GetLength(1); j++)
             {
                 // 0以上なら移動範囲として追加する
-                if (result[i,j] >= 0)
+                /* マップの端に行くと行動できなくなるエラー解消 */
+                /*nullチェック*/
+                if (result[i,j] >= 0 && tileObjs[i, j] != null)
                 {
                     movableTiles.Add(tileObjs[i, j]);
                 }
             }
         }
-
-        //// characterから上下左右のタイルを探す
-        //    movableTiles.Add(tileObjs.Find(tile => tile.positionInt == character.Position));
-        //    movableTiles.Add(tileObjs.Find(tile => tile.positionInt == character.Position+Vector2Int.up));
-        //    movableTiles.Add(tileObjs.Find(tile => tile.positionInt == character.Position+Vector2Int.down));
-        //    movableTiles.Add(tileObjs.Find(tile => tile.positionInt == character.Position+Vector2Int.left));
-        //    movableTiles.Add(tileObjs.Find(tile => tile.positionInt == character.Position+Vector2Int.right));
-
+        // nullだったら削除
         movableTiles.RemoveAll(tile => tile == null);
         foreach (var tile in movableTiles)
         {
@@ -111,41 +102,27 @@ public class MapManager : MonoBehaviour
     //攻撃範囲を表示する
     public void ShowAttackablePanels(Character character, List<TileObj> tiles)
     {
-        // characterが乗っているタイルのIndexを取得する
-        Vector2Int index = GetTileOn(character).Index;
-        calcMoveRange.SetMoveCost(tileObjs, false);
-        int[,] result = calcMoveRange.StartSearch(index.x, index.y, character.AttackRange);
+        // ***characterから上下左右のタイルを探す  // マップの外はバグあり***
+        TileObj currentTile = GetTileOn(character);
+        AddTile(tiles, currentTile.Index.x, currentTile.Index.y + 1);
+        AddTile(tiles, currentTile.Index.x, currentTile.Index.y - 1);
+        AddTile(tiles, currentTile.Index.x + 1, currentTile.Index.y);
+        AddTile(tiles, currentTile.Index.x - 1, currentTile.Index.y);
 
-        /* マップの端に行くと行動できなくなるエラー解消 */
-        /*nullチェック*/
-
-
-        /**/
-
-        for (int i = 0; i < result.GetLength(0); i++)
-        {
-            for (int j = 0; j < result.GetLength(1); j++)
-            {
-                // 0以上なら攻撃範囲として追加する
-                if (result[i, j] >= 0)
-                {
-                    tiles.Add(tileObjs[i, j]);
-                }
-            }
-        }
-
-        //// characterから上下左右のタイルを探す  // マップの外はバグあり
-        //TileObj currentTile = GetTileOn(character);
-        //tiles.Add(tileObjs[currentTile.Index.x, currentTile.Index.y+1]);
-        //tiles.Add(tileObjs[currentTile.Index.x, currentTile.Index.y-1]);
-        //tiles.Add(tileObjs[currentTile.Index.x+1, currentTile.Index.y]);
-        //tiles.Add(tileObjs[currentTile.Index.x-1, currentTile.Index.y]);
-
+        // nullだったら削除
         tiles.RemoveAll(tile => tile == null);
         foreach (var tile in tiles)
         {
             // 攻撃用に表示
             tile.ShowAttackablePanel(true);
+        }
+    }
+
+    void AddTile(List<TileObj> tiles,int x,int y)
+    {
+        if (0 <= x && x < tileObjs.GetLength(0) && 0 <= y && y < tileObjs.GetLength(1))
+        {
+            tiles.Add(tileObjs[x, y]);
         }
     }
 

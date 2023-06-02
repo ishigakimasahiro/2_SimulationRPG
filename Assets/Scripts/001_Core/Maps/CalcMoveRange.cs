@@ -21,7 +21,7 @@ public class CalcMoveRange : MonoBehaviour
 
     [SerializeField] CharactersManager charactersManager;
 
-    public void SetMoveCost(TileObj[,] tileObjs,bool isAttackableSwith)
+    public void SetMoveCost(TileObj[,] tileObjs,bool attack)
     {
         // 移動コストのマップデータ(_originalMapList)を作成 (本来はここでは作成せず外部から渡す)
         for (int i = 0; i < _xLength; i++)
@@ -29,7 +29,7 @@ public class CalcMoveRange : MonoBehaviour
             for (int j = 0; j < _zLength; j++)
             {
                 Character npc = charactersManager.GetCharacter(tileObjs[i, j].transform.position);
-                if(npc && isAttackableSwith)
+                if(npc && attack)
                 {
                     _originalMapList[i, j] = -99;
                 }
@@ -82,7 +82,7 @@ public class CalcMoveRange : MonoBehaviour
     void Search4(int x, int z, int m)
     {
 
-        if (0 < x && x < _xLength && 0 < z && z < _zLength)
+        if (0 <= x && x < _xLength && 0 <= z && z < _zLength)
         {
             // 上方向
             Search(x, z - 1, m);
