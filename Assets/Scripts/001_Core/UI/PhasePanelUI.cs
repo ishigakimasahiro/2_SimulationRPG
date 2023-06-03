@@ -20,7 +20,7 @@ public class PhasePanelUI : MonoBehaviour
     }
 
     // OnEndAnimÇÕìnÇ≥ÇÍÇΩä÷êî : âΩÇ‡ìnÇ≥ÇÍÇ»Ç©Ç¡ÇΩÇÁnull
-    public IEnumerator PhasePanelAnim(string message)
+    public IEnumerator PhasePanelAnim(string message,UnityAction unityAction = null)
     {
         turnText.text = message;
         yield return new WaitForSeconds(0.3f);
@@ -31,6 +31,7 @@ public class PhasePanelUI : MonoBehaviour
         // 90Ç…ñﬂÇ∑
         yield return transform.DORotate(new Vector3(90, 0, 0), 0.6f).WaitForCompletion();
         yield return new WaitForSeconds(0.2f);
+        unityAction?.Invoke();
     }
 
     // Ç‚ÇÈÇ±Ç∆

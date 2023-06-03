@@ -38,12 +38,22 @@ public class CharactersManager : MonoBehaviour
         return null;
     }
 
+    // 敵キャラをランダムに一体取得する
     public Character GetRandomEnemy()
     {
+        // 全ての敵を集める
         List<Character> enemies = characters.FindAll(characters => characters.IsEnemy);
+        // ランダムに一つ渡す
         int r = Random.Range(0, enemies.Count);
         return enemies[r];
     }
+
+    // 移動できる敵キャラを取得
+    public Character GetMovableEnemy()
+    {
+        return characters.Find(enemy => enemy.IsEnemy && !enemy.IsMoved);
+    }
+
 
     // 自分に最も近いキャラ(敵キャラ)を探す
     // 敵キャラ：PlayerからするとEnemy,EnemyからするとPlayer

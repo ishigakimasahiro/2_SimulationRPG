@@ -259,20 +259,12 @@ public class GameManager : MonoBehaviour
             actionCommandUI.Show(false);
             selectedCharacter = null;
             mapManager.ResetAttackablePanels(attackableTiles);
-            OnEnemyTurnEnd();
+            EnemyCharacterSelection();
         }
     }
 
     void OnPlayerTurnEnd()
     {
-        Debug.Log("相手ターン");
-        phase = Phase.EnemyCharacterSelection;
-        actionCommandUI.Show(false);
-        selectedCharacter = null;
-        mapManager.ResetAttackablePanels(attackableTiles);
-        StartCoroutine(phasePanelUI.PhasePanelAnim("ENEMY TURN"));// フェーズアニメ
-        StartCoroutine(EnemyCharacterSelection());  // フェーズアニメが終わってから実行したい
-
         foreach (var chara in charactersManager.characters)
         {
             if (chara.IsEnemy)
@@ -280,45 +272,31 @@ public class GameManager : MonoBehaviour
                 chara.OnBeginTurn();
             }
         }
+
+        Debug.Log("相手ターン");
+        phase = Phase.EnemyCharacterSelection;
+        actionCommandUI.Show(false);
+        selectedCharacter = null;
+        mapManager.ResetAttackablePanels(attackableTiles);
+        StartCoroutine(phasePanelUI.PhasePanelAnim("ENEMY TURN", EnemyCharacterSelection));// フェーズアニメ
+        // EnemyCharacterSelection();  // フェーズアニメが終わってから実行したい
     }
 
-    IEnumerator EnemyCharacterSelection()
+    void EnemyCharacterSelection()
     {
-        yield return new WaitForSeconds(1.3f);
+        selectedCharacter = charactersManager.GetMovableEnemy();
 
-        if (IsEnemyCharacter())
+        if (selectedCharacter)
         {
-            Debug.Log("敵のキャラ選択");
-            phase = Phase.EnemyCharacterMoveSelection;
+            mapManager.ResetMovablePanels(movableTiles);
+            // 移動範囲を表示
+            SetMoveInfomation();
+            EnemyCharacterMoveSelection();
         }
-    }
-
-    bool IsEnemyCharacter()
-    {
-        TileObj tileObj = mapManager.GetClickTileObj();  /*2023//5/31 追加*/
-
-        Character randomEnemy = charactersManager.GetRandomEnemy();
-        if (randomEnemy)
+        else
         {
-            // 選択キャラの保持
-            selectedCharacter = randomEnemy;
-
-            // キャラのステータスを表示
-            statusUI.Show(selectedCharacter);
-
-            // もし自分のキャラが動いていないなら、移動範囲表示
-            if (randomEnemy.IsMoved == false && randomEnemy.IsEnemy)
-            {
-                // 移動範囲をリセット
-                mapManager.ResetMovablePanels(movableTiles);
-                // 移動範囲を表示
-                SetMoveInfomation();
-
-                Invoke("EnemyCharacterMoveSelection", 2f);
-                return true;
-            }
+            OnEnemyTurnEnd();
         }
-        return false;
     }
 
     void EnemyCharacterMoveSelection()
@@ -377,7 +355,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Invoke("OnEnemyTurnEnd", 2f);
+            EnemyCharacterSelection();
         }
     }
 
@@ -423,3 +401,5 @@ public class GameManager : MonoBehaviour
 // ・Playerの方に近づかない
 // ・詰む  => もしMapがnullだったら行動しない
 // ・敵キャラが攻撃した後の敵のターンで止まる(EnemyCharacterSelection)
+
+// ・全ての敵が動いたらPlayerターンになる
