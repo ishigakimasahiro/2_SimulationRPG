@@ -51,7 +51,7 @@ public class Character : MonoBehaviour
     public int Damage(int value)
     {
         hp -= value;
-        if(hp<=0)
+        if(hp <= 0)
         {
             hp = 0;
         }

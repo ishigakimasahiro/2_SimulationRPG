@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
         EnemyCharacterSelection,        // 敵選択
         EnemyCharacterMoveSelection,    // 敵移動
         EnemyCharacterTargetSelection,  // 敵の攻撃
+        GameOver,
+        GameClear,
     }
     [SerializeField] Phase phase;
 
@@ -48,6 +50,7 @@ public class GameManager : MonoBehaviour
 
     // ターン終了ボタンの表示/非表示
     [SerializeField] GameObject turnEndButton;
+
 
     private void Start()
     {
